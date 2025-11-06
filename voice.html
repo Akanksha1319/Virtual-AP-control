@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Voice Command Simulator</title>
+  <style>
+    body { font-family: Arial; text-align: center; margin-top: 100px; }
+    button { padding: 12px 25px; font-size: 18px; border: none; border-radius: 6px; background: #007bff; color: white; cursor: pointer; }
+    #result { font-size: 22px; margin-top: 20px; color: #333; }
+  </style>
+</head>
+<body>
+  <h1>🎙️ Voice Command Simulator</h1>
+  <button id="start">Start Listening</button>
+  <div id="result">Say a command like "Turn on AP1" or "Turn off all"</div>
+
+  <script>
+    const startBtn = document.getElementById("start");
+    const resultDiv = document.getElementById("result");
+
+    if (!('webkitSpeechRecognition' in window)) {
+      resultDiv.textContent = "Speech Recognition not supported in this browser 😢";
+      startBtn.disabled = true;
+    } else {
+      const recog = new webkitSpeechRecognition();
+      recog.lang = "en-US";
+      recog.continuous = false;
+      recog.interimResults = false;
+
+      recog.onresult = (event) => {
+        const transcript = event.results[0][0].transcript.toLowerCase();
+        resultDiv.textContent = `You said: "${transcript}"`;
+
+        // Convert natural speech to Tinkercad commands
+        let cmd = "";
+        if (transcript.includes("on all")) cmd = "on all";
+        else if (transcript.includes("off all")) cmd = "off all";
+        else if (transcript.includes("on ap1")) cmd = "on ap1";
+        else if (transcript.includes("off ap1")) cmd = "off ap1";
+        else if (transcript.includes("on ap2")) cmd = "on ap2";
+        else if (transcript.includes("off ap2")) cmd = "off ap2";
+        else if (transcript.includes("on ap3")) cmd = "on ap3";
+        else if (transcript.includes("off ap3")) cmd = "off ap3";
+        else if (transcript.includes("on ap4")) cmd = "on ap4";
+        else if (transcript.includes("off ap4")) cmd = "off ap4";
+
+        if (cmd) {
+          resultDiv.innerHTML += `<br><b>→ Command:</b> ${cmd}<br><small>Copy and paste this into Tinkercad Serial Monitor</small>`;
+        } else {
+          resultDiv.innerHTML += `<br><span style="color:red;">Unrecognized command</span>`;
+        }
+      };
+
+      startBtn.onclick = () => {
+        resultDiv.textContent = "🎙️ Listening...";
+        recog.start();
+      };
+    }
+  </script>
+</body>
+</html>
